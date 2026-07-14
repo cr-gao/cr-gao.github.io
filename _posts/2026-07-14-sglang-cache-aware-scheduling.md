@@ -15,7 +15,7 @@ authors:
   - name: Chenrui Gao
     url: "/"
     affiliations:
-      name: UM–SJTU Joint Institute
+      name: University of Michigan
 
 bibliography: 2026-07-14-sglang-cache-aware-scheduling.bib
 
