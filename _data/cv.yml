@@ -1,9 +1,11 @@
-# RenderCV format (https://rendercv.com/). Rendered on /cv/, and compiled into a
-# PDF by .github/workflows/render-cv.yml on every push that touches this file.
+# RenderCV-style schema (https://rendercv.com/), consumed by the Jekyll CV page
+# at /cv/. The upstream render-cv.yml workflow (which compiled this into a PDF)
+# was removed: al-folio's own cv.yml no longer validates against current RenderCV,
+# which rejects `label`/`image`/`summary` as unknown fields. The PDF linked from
+# /cv/ is whatever you drop at assets/pdf/cv.pdf.
 #
-# NOTE: RenderCV *validates* this file, so TODOs can only live in free text and
-# comments — an email or a date that says "TODO" fails the schema and turns the
-# "Render a CV" action red. Placeholder dates below are marked TODO in comments.
+# Section titles are dispatched by *exact* name — see the note above Open Source
+# Projects below.
 cv:
   name: Chenrui Gao
   label: LLM Infrastructure — inference & training systems
@@ -12,7 +14,7 @@ cv:
   # location: Shanghai, China
   image: ""
   summary: >-
-    Computer Engineering senior at the UM–SJTU Joint Institute, joining UT Austin's
+    Computer Engineering Class of 2026 at University of Michigan, joining UT Austin's
     MSCS program in Fall 2026. I work on LLM infrastructure — inference engines and
     RL post-training / rollout systems: high-throughput inference, RL training
     infrastructure, and agentic RL rollout scheduling. Previously robotics research
@@ -22,8 +24,8 @@ cv:
   social_networks:
     - network: GitHub
       username: cr-gao
-    # - network: LinkedIn
-    #   username: TODO
+    - network: LinkedIn
+      username: chenrui-gao
 
   sections:
     Education:
@@ -37,13 +39,23 @@ cv:
         highlights:
           - Incoming, Fall 2026.
 
-      - institution: UM–SJTU Joint Institute
-        location: Shanghai, China
-        url: https://www.ji.sjtu.edu.cn/
+      - institution: University of Michigan
+        location: Ann Arbor, MI, USA
+        url: https://www.eecs.umich.edu/
         area: Computer Engineering
         degree: BSE
-        start_date: 2022-09 # TODO: verify your actual start date
-        end_date: 2026-06 # TODO: verify your actual graduation date
+        start_date: 2024-08 # TODO: verify your actual start date
+        end_date: 2026-05 # TODO: verify your actual graduation date
+        highlights:
+          - "TODO: GPA / honors / relevant coursework."
+
+      - institution: Shanghai Jiao Tong University
+        location: Shanghai, China
+        url: https://www.gc.sjtu.edu.cn/
+        area: Mechanical Engineering
+        degree: BSE
+        start_date: 2022-08 # TODO: verify your actual start date
+        end_date: 2026-08 # TODO: verify your actual graduation date
         highlights:
           - "TODO: GPA / honors / relevant coursework."
 
@@ -63,22 +75,22 @@ cv:
 
     Projects:
       - name: Mini Inference Engine
-        date: 2026 – present
+        date: 2026 - present
         highlights:
           - From-scratch LLM inference engine (nano-vLLM tradition) — paged KV cache, continuous batching, request scheduler.
           - Building toward speculative decoding and/or MoE-aware optimization.
 
       - name: RL Rollout Scheduler on verl
-        date: 2026 – present
+        date: 2026 - present
         highlights:
           - Reframes oversample-and-cancel as priority-based admission; oversampled requests become low-priority backfill competing for GPU throughout generation.
           - Studies the length-correlated bias naive cancellation introduces — costly for reasoning RL, where long trajectories carry high GRPO learning value.
-          - Targets a throughput–quality frontier with bias-bounded alternatives (partial rollout with pause/resume, importance-weighted truncation, randomized cancel).
+          - Targets a throughput-quality frontier with bias-bounded alternatives (partial rollout with pause/resume, importance-weighted truncation, randomized cancel).
 
       - name: auto-eln
         date: 2026
         highlights:
-          - Worker–Manager system for automated instrument data capture (undergraduate capstone).
+          - Worker-Manager system for automated instrument data capture (undergraduate capstone).
           - Flask/SQLAlchemy manager, PySide6 worker, PostgreSQL with a template-driven schema.
 
     # NOTE: the CV page dispatches on the *exact* section title. "Open Source Projects"

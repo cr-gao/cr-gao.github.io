@@ -81,6 +81,6 @@ Multimodal RL training framework built on verl.
 
 #### [vLLM-Omni](https://github.com/vllm-project/vllm-omni)
 
-<!-- TODO: replace this line with your own one-line description of the contribution. -->
+Merge-on-load feature for diffusion LoRA.
 
 - [#5059](https://github.com/vllm-project/vllm-omni/pull/5059) — _open_ — `[Core] Merge-on-load fast path for diffusion LoRA (shadow wrappers)`

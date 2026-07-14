@@ -2,12 +2,10 @@
 # the socials will be displayed in the order they are defined here
 # for more information, please refer to the documentation of jekyll-socials plugin: https://github.com/george-gca/jekyll-socials
 #
-# NOTE: every value below is a TODO placeholder. Each field is wired up and will
-# render its icon, but the link target is wrong until you replace "TODO".
 # Delete a line entirely if you don't want that icon to appear at all.
-email: TODO # your email address (e.g. crgao@umich.edu)
-github_username: TODO # -> https://github.com/<value>
-linkedin_username: TODO # -> https://www.linkedin.com/in/<value>
-scholar_userid: TODO # Google Scholar ID -> https://scholar.google.com/citations?user=<value>
+email: cg52638@my.utexas.edu # your email address
+github_username: cr-gao # -> https://github.com/<value>
+linkedin_username: chenrui-gao # -> https://www.linkedin.com/in/<value>
+scholar_userid: a6cRXbwAAAAJ # Google Scholar ID -> https://scholar.google.com/citations?user=<value>
 cv_pdf: /assets/pdf/cv.pdf # TODO: drop your CV PDF at assets/pdf/cv.pdf
 rss_icon: true # comment this line to hide the RSS icon

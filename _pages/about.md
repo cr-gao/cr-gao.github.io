@@ -6,10 +6,11 @@ subtitle: LLM infrastructure — inference & training systems.
 
 profile:
   align: right
-  image: prof_pic.jpg # TODO: replace assets/img/prof_pic.jpg with a real photo
+  image: prof_pic.png
   image_circular: false # crops the image to make it circular
   more_info: >
-    <p>Computer Engineering, UM–SJTU Joint Institute</p>
+    <p>Computer Engineering, University of Michigan</p>
+    <p>Dual degree with Shanghai Jiao Tong University</p>
     <p>MSCS @ UT Austin, Fall 2026</p>
 
 selected_papers: true # includes a list of papers marked as "selected={true}"
@@ -26,7 +27,7 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-I'm Chenrui, a Computer Engineering senior at the [UM–SJTU Joint Institute](https://www.ji.sjtu.edu.cn/), joining [UT Austin](https://www.cs.utexas.edu/)'s MSCS program in Fall 2026. I work on **LLM infrastructure** — inference engines and RL post-training / rollout systems. Previously I did robotics research at CMU's ARCS Lab on multi-agent path planning.
+I'm Chenrui, a Computer Engineering senior at the [University of Michigan](https://www.eecs.umich.edu/), on the dual-degree program with [Shanghai Jiao Tong University](https://en.sjtu.edu.cn/), joining [UT Austin](https://www.cs.utexas.edu/)'s MSCS program in Fall 2026. I work on **LLM infrastructure** — inference engines and RL post-training / rollout systems. Previously I did robotics research at CMU's ARCS Lab on multi-agent path planning.
 
 My focus now is deliberately on the systems side of large models: high-throughput inference, RL training infrastructure, and agentic RL rollout scheduling. Strong C++ and Python.
 
