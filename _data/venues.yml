@@ -1,0 +1,7 @@
+# Venue metadata for the `abbr` field of a bib entry: gives the little coloured
+# chip next to a publication a link and a colour.
+#
+# TODO: add the VAMP-MR venue once you know it, e.g.
+# "ICRA":
+#   url: https://www.ieee-icra.org/
+#   color: "#00369f"

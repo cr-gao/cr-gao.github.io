@@ -1,0 +1,10 @@
+# Used by the (currently removed) repositories page. Kept so you can re-add
+# _pages/repositories.md from upstream al-folio later if you want GitHub stats cards.
+github_users:
+  - cr-gao
+
+repo_description_lines_max: 2
+
+github_repos:
+  - verl-project/verl-omni
+  - vllm-project/vllm-omni

@@ -1,0 +1,99 @@
+# RenderCV format (https://rendercv.com/). Rendered on /cv/ and, if the
+# .github/workflows/render-cv.yml action is enabled, also compiled into a PDF.
+# TODO: everything marked TODO below needs your real details.
+cv:
+  name: Chenrui Gao
+  label: LLM Infrastructure — inference & training systems
+  email: TODO # e.g. crgao@umich.edu
+  location: TODO
+  image: ""
+  summary: >-
+    Computer Engineering senior at the UM–SJTU Joint Institute, joining UT Austin's
+    MSCS program in Fall 2026. I work on LLM infrastructure — inference engines and
+    RL post-training / rollout systems: high-throughput inference, RL training
+    infrastructure, and agentic RL rollout scheduling. Previously robotics research
+    at CMU's ARCS Lab on multi-agent path planning. Strong C++ and Python.
+
+  social_networks:
+    - network: GitHub
+      username: TODO
+    - network: LinkedIn
+      username: TODO
+
+  sections:
+    Education:
+      - institution: University of Texas at Austin
+        location: Austin, TX, US
+        url: https://www.cs.utexas.edu/
+        area: Computer Science
+        studyType: MSCS
+        start_date: 2026-08
+        end_date: present
+        highlights:
+          - "Incoming, Fall 2026."
+
+      - institution: UM–SJTU Joint Institute (University of Michigan – Shanghai Jiao Tong University)
+        location: Shanghai, China
+        url: https://www.ji.sjtu.edu.cn/
+        area: Computer Engineering
+        studyType: B.S.E.
+        start_date: TODO
+        end_date: 2026
+        highlights:
+          - "TODO: GPA / honors / relevant coursework."
+
+    Experience:
+      - company: TODO
+        position: TODO
+        location: TODO
+        start_date: TODO
+        end_date: TODO
+        summary: "TODO: add internships / research positions."
+        highlights:
+          - TODO
+
+      - company: CMU ARCS Lab
+        position: Research Intern
+        location: Pittsburgh, PA, US
+        start_date: TODO
+        end_date: TODO
+        summary: Robotics research on multi-agent path planning (VAMP-MR).
+        highlights:
+          - "TODO: what you built / what the result was."
+
+    Projects:
+      - name: Mini Inference Engine
+        date: 2026 – present
+        highlights:
+          - From-scratch LLM inference engine (nano-vLLM tradition) — paged KV cache, continuous batching, request scheduler.
+          - Building toward speculative decoding and/or MoE-aware optimization.
+
+      - name: RL Rollout Scheduler on verl
+        date: 2026 – present
+        highlights:
+          - Reframes oversample-and-cancel as priority-based admission; oversampled requests become low-priority backfill competing for GPU throughout generation.
+          - Studies the length-correlated bias naive cancellation introduces, costly for reasoning RL where long trajectories carry high GRPO learning value.
+          - Targets a throughput–quality frontier with bias-bounded alternatives (partial rollout with pause/resume, importance-weighted truncation, randomized cancel).
+
+      - name: auto-eln
+        date: 2026
+        highlights:
+          - Worker–Manager system for automated instrument data capture (undergraduate capstone).
+          - Flask/SQLAlchemy manager, PySide6 worker, PostgreSQL with a template-driven schema.
+
+    Open Source:
+      - name: verl-omni
+        date: 2026
+        highlights:
+          - "Merged PRs #242, #246, #252 — reward-metric fixes and rollout-server profiling / FlowGRPO profiling recipe."
+
+      - name: vLLM-Omni
+        date: 2026
+        highlights:
+          - "Open PR #5059 — merge-on-load fast path for diffusion LoRA (shadow wrappers)."
+
+    Skills:
+      - label: Languages
+        details: C++, Python
+      - label: Systems
+        details: "TODO: CUDA, vLLM, SGLang, verl, Ray, PyTorch, … — trim to what you actually want to claim."
