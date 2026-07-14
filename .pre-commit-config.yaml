@@ -7,4 +7,22 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
+        # _config.yml, _data/*.yml and every page's front matter are plain YAML,
+        # but the Liquid templates under _includes/_layouts are not.
+        exclude: ^(_includes|_layouts)/
       - id: check-added-large-files
+
+  # Mirrors the "Prettier code formatter" GitHub Action, which runs
+  # `prettier --check .` and fails the build on any diff. Running it here means
+  # formatting is fixed at commit time instead of turning CI red.
+  # pre-commit provisions its own Node, so this works without the conda env.
+  - repo: https://github.com/rbubley/mirrors-prettier
+    rev: v3.9.5
+    hooks:
+      - id: prettier
+        # NOTE: this list *replaces* the hook's default deps, so prettier itself
+        # has to be listed here too — otherwise the hook fails with
+        # "Executable `prettier` not found".
+        additional_dependencies:
+          - "prettier@3.9.5"
+          - "@shopify/prettier-plugin-liquid@1.10.0"
