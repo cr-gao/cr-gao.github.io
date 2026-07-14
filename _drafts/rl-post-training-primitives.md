@@ -24,12 +24,12 @@ _posts/YYYY-MM-DD-rl-post-training-primitives.md
   - The critic, and why "value function over token prefixes" is a strange object for an LLM.
   - KL penalty vs. KL in the reward — the two places it shows up and why people confuse them.
 - **GAE.** The bias–variance dial ($$\lambda$$), and what it means when your reward is a single scalar at the end of a 4k-token trajectory.
-- **GRPO.** Drop the critic; use the *group* as the baseline. Advantage from group-relative normalization.
+- **GRPO.** Drop the critic; use the _group_ as the baseline. Advantage from group-relative normalization.
   - What this buys (no critic to train, no critic memory) and what it costs (needs $$n$$ samples per prompt — which is exactly what makes rollout throughput the bottleneck, and exactly why oversampling shows up).
-  - The connection to my [rollout scheduler]({{ '/projects/rl-rollout-scheduler/' | relative_url }}): under GRPO, dropping a *long* trajectory from a group doesn't just lose a sample — it biases the group baseline.
+  - The connection to my [rollout scheduler]({{ '/projects/rl-rollout-scheduler/' | relative_url }}): under GRPO, dropping a _long_ trajectory from a group doesn't just lose a sample — it biases the group baseline.
 - **The credit-assignment problem.** One reward, thousands of tokens. Which token deserves it?
   - **VinePPO** — Monte Carlo value estimates at intermediate states instead of a learned critic; what it costs in extra rollouts.
-  - **GiGPO** — group-in-group: episode-level *and* step-level grouping to get finer-grained advantages for agentic/multi-turn settings.
+  - **GiGPO** — group-in-group: episode-level _and_ step-level grouping to get finer-grained advantages for agentic/multi-turn settings.
   - The pattern to notice: both buy credit assignment with **more generation**, which pushes the cost right back into the inference engine.
 - **The systems takeaway.** Every improvement in credit assignment here is paid for in rollout throughput. That's why the RL algorithm and the rollout scheduler can't be designed independently.
 

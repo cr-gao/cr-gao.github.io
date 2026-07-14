@@ -30,4 +30,4 @@ The differentiator I'm building toward — one or both of:
 
 ## Why build it instead of reading about it
 
-vLLM and SGLang are large enough that the mechanism is buried in the engineering. Reimplementing the core loop is the cheapest way to know *why* a decision is there — and it gives me a testbed small enough to change the scheduler and actually measure what happens.
+vLLM and SGLang are large enough that the mechanism is buried in the engineering. Reimplementing the core loop is the cheapest way to know _why_ a decision is there — and it gives me a testbed small enough to change the scheduler and actually measure what happens.

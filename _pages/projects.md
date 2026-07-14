@@ -75,12 +75,12 @@ Upstream contributions to LLM training and inference frameworks.
 
 Multimodal RL training framework built on verl.
 
-- [#242](https://github.com/verl-project/verl-omni/pull/242) — *merged* — `[reward] fix: drop duplicate critic/score metric for single-reward training`
-- [#246](https://github.com/verl-project/verl-omni/pull/246) — *merged* — `[reward] fix: drop duplicate reward/<key>/score metric for multi-reward training`
-- [#252](https://github.com/verl-project/verl-omni/pull/252) — *merged* — `[trainer, doc] feat: profile rollout servers + lightweight profiling recipe for FlowGRPO`
+- [#242](https://github.com/verl-project/verl-omni/pull/242) — _merged_ — `[reward] fix: drop duplicate critic/score metric for single-reward training`
+- [#246](https://github.com/verl-project/verl-omni/pull/246) — _merged_ — `[reward] fix: drop duplicate reward/<key>/score metric for multi-reward training`
+- [#252](https://github.com/verl-project/verl-omni/pull/252) — _merged_ — `[trainer, doc] feat: profile rollout servers + lightweight profiling recipe for FlowGRPO`
 
 #### [vLLM-Omni](https://github.com/vllm-project/vllm-omni)
 
 <!-- TODO: replace this line with your own one-line description of the contribution. -->
 
-- [#5059](https://github.com/vllm-project/vllm-omni/pull/5059) — *open* — `[Core] Merge-on-load fast path for diffusion LoRA (shadow wrappers)`
+- [#5059](https://github.com/vllm-project/vllm-omni/pull/5059) — _open_ — `[Core] Merge-on-load fast path for diffusion LoRA (shadow wrappers)`

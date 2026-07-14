@@ -1,11 +1,15 @@
-# RenderCV format (https://rendercv.com/). Rendered on /cv/ and, if the
-# .github/workflows/render-cv.yml action is enabled, also compiled into a PDF.
-# TODO: everything marked TODO below needs your real details.
+# RenderCV format (https://rendercv.com/). Rendered on /cv/, and compiled into a
+# PDF by .github/workflows/render-cv.yml on every push that touches this file.
+#
+# NOTE: RenderCV *validates* this file, so TODOs can only live in free text and
+# comments — an email or a date that says "TODO" fails the schema and turns the
+# "Render a CV" action red. Placeholder dates below are marked TODO in comments.
 cv:
   name: Chenrui Gao
   label: LLM Infrastructure — inference & training systems
-  email: TODO # e.g. crgao@umich.edu
-  location: TODO
+  # TODO: uncomment and fill in (must be a valid address, or RenderCV rejects it)
+  # email: crgao@umich.edu
+  # location: Shanghai, China
   image: ""
   summary: >-
     Computer Engineering senior at the UM–SJTU Joint Institute, joining UT Austin's
@@ -14,50 +18,46 @@ cv:
     infrastructure, and agentic RL rollout scheduling. Previously robotics research
     at CMU's ARCS Lab on multi-agent path planning. Strong C++ and Python.
 
+  # TODO: fill in your usernames (these are also set separately in _data/socials.yml)
   social_networks:
     - network: GitHub
-      username: TODO
-    - network: LinkedIn
-      username: TODO
+      username: cr-gao
+    # - network: LinkedIn
+    #   username: TODO
 
   sections:
     Education:
       - institution: University of Texas at Austin
-        location: Austin, TX, US
+        location: Austin, TX, USA
         url: https://www.cs.utexas.edu/
         area: Computer Science
-        studyType: MSCS
+        degree: MSCS
         start_date: 2026-08
         end_date: present
         highlights:
-          - "Incoming, Fall 2026."
+          - Incoming, Fall 2026.
 
-      - institution: UM–SJTU Joint Institute (University of Michigan – Shanghai Jiao Tong University)
+      - institution: UM–SJTU Joint Institute
         location: Shanghai, China
         url: https://www.ji.sjtu.edu.cn/
         area: Computer Engineering
-        studyType: B.S.E.
-        start_date: TODO
-        end_date: 2026
+        degree: BSE
+        start_date: 2022-09 # TODO: verify your actual start date
+        end_date: 2026-06 # TODO: verify your actual graduation date
         highlights:
           - "TODO: GPA / honors / relevant coursework."
 
     Experience:
-      - company: TODO
+      - company: "TODO: internships / research positions"
         position: TODO
-        location: TODO
-        start_date: TODO
-        end_date: TODO
-        summary: "TODO: add internships / research positions."
+        summary: "TODO: add your internships and research positions here, most recent first."
         highlights:
-          - TODO
+          - "TODO: what you built, and what it did for the system."
 
       - company: CMU ARCS Lab
         position: Research Intern
-        location: Pittsburgh, PA, US
-        start_date: TODO
-        end_date: TODO
-        summary: Robotics research on multi-agent path planning (VAMP-MR).
+        location: Pittsburgh, PA, USA
+        summary: Robotics research on multi-agent path planning (VAMP-MR). # TODO: add start_date / end_date
         highlights:
           - "TODO: what you built / what the result was."
 
@@ -72,7 +72,7 @@ cv:
         date: 2026 – present
         highlights:
           - Reframes oversample-and-cancel as priority-based admission; oversampled requests become low-priority backfill competing for GPU throughout generation.
-          - Studies the length-correlated bias naive cancellation introduces, costly for reasoning RL where long trajectories carry high GRPO learning value.
+          - Studies the length-correlated bias naive cancellation introduces — costly for reasoning RL, where long trajectories carry high GRPO learning value.
           - Targets a throughput–quality frontier with bias-bounded alternatives (partial rollout with pause/resume, importance-weighted truncation, randomized cancel).
 
       - name: auto-eln
@@ -85,7 +85,7 @@ cv:
       - name: verl-omni
         date: 2026
         highlights:
-          - "Merged PRs #242, #246, #252 — reward-metric fixes and rollout-server profiling / FlowGRPO profiling recipe."
+          - "Merged PRs #242, #246, #252 — reward-metric fixes, and rollout-server profiling with a lightweight FlowGRPO profiling recipe."
 
       - name: vLLM-Omni
         date: 2026
@@ -96,4 +96,4 @@ cv:
       - label: Languages
         details: C++, Python
       - label: Systems
-        details: "TODO: CUDA, vLLM, SGLang, verl, Ray, PyTorch, … — trim to what you actually want to claim."
+        details: "TODO: e.g. CUDA, vLLM, SGLang, verl, Ray, PyTorch — trim to what you actually want to claim."

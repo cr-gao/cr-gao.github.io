@@ -19,11 +19,11 @@ An RL rollout scheduler built on [verl](https://github.com/volcengine/verl).
 
 RL post-training generates far more rollouts than it ends up training on. The standard trick is **oversample-and-cancel**: launch more generations than you need, take the first $$N$$ that finish, kill the rest. It's a straggler mitigation, and it works — the batch stops waiting on its slowest trajectory.
 
-But "the first $$N$$ that finish" is not a neutral sample. It is **length-biased**: short trajectories finish first, so cancellation systematically drops long ones. That's costly in general, and it's *especially* costly for reasoning RL, where long trajectories are exactly the ones carrying high GRPO learning value. You are throwing away the samples with the most signal because they were slow.
+But "the first $$N$$ that finish" is not a neutral sample. It is **length-biased**: short trajectories finish first, so cancellation systematically drops long ones. That's costly in general, and it's _especially_ costly for reasoning RL, where long trajectories are exactly the ones carrying high GRPO learning value. You are throwing away the samples with the most signal because they were slow.
 
 ## The reframing
 
-Treat oversampling not as *launch-then-kill*, but as an **admission** problem. Oversampled requests become **low-priority backfill** that competes for GPU throughout generation, rather than being cancelled at the finish line:
+Treat oversampling not as _launch-then-kill_, but as an **admission** problem. Oversampled requests become **low-priority backfill** that competes for GPU throughout generation, rather than being cancelled at the finish line:
 
 - Priority classes decide who gets to run at each step, not who survives at the end.
 - Backfill requests soak up capacity the primary requests aren't using — and yield it back when the primaries need it.
