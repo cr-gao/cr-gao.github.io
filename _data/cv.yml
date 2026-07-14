@@ -46,8 +46,6 @@ cv:
         degree: BSE
         start_date: 2024-08 # TODO: verify your actual start date
         end_date: 2026-05 # TODO: verify your actual graduation date
-        highlights:
-          - "TODO: GPA / honors / relevant coursework."
 
       - institution: Shanghai Jiao Tong University
         location: Shanghai, China
@@ -56,22 +54,14 @@ cv:
         degree: BSE
         start_date: 2022-08 # TODO: verify your actual start date
         end_date: 2026-08 # TODO: verify your actual graduation date
-        highlights:
-          - "TODO: GPA / honors / relevant coursework."
 
     Experience:
-      - company: "TODO: internships / research positions"
-        position: TODO
-        summary: "TODO: add your internships and research positions here, most recent first."
-        highlights:
-          - "TODO: what you built, and what it did for the system."
-
       - company: CMU ARCS Lab
         position: Research Intern
         location: Pittsburgh, PA, USA
+        start_date: 2024-11
+        end_date: 2025-11
         summary: Robotics research on multi-agent path planning (VAMP-MR). # TODO: add start_date / end_date
-        highlights:
-          - "TODO: what you built / what the result was."
 
     Projects:
       - name: Mini Inference Engine
