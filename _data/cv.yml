@@ -81,19 +81,23 @@ cv:
           - Worker–Manager system for automated instrument data capture (undergraduate capstone).
           - Flask/SQLAlchemy manager, PySide6 worker, PostgreSQL with a template-driven schema.
 
-    Open Source:
+    # NOTE: the CV page dispatches on the *exact* section title. "Open Source Projects"
+    # and "Projects" both render with the project template; an unrecognised title
+    # (e.g. plain "Open Source") falls through to a generic renderer and shows nothing.
+    Open Source Projects:
       - name: verl-omni
-        date: 2026
+        url: https://github.com/verl-project/verl-omni
         highlights:
           - "Merged PRs #242, #246, #252 — reward-metric fixes, and rollout-server profiling with a lightweight FlowGRPO profiling recipe."
 
       - name: vLLM-Omni
-        date: 2026
+        url: https://github.com/vllm-project/vllm-omni
         highlights:
           - "Open PR #5059 — merge-on-load fast path for diffusion LoRA (shadow wrappers)."
 
     Skills:
-      - label: Languages
-        details: C++, Python
-      - label: Systems
-        details: "TODO: e.g. CUDA, vLLM, SGLang, verl, Ray, PyTorch — trim to what you actually want to claim."
+      - name: Languages
+        keywords: [C++, Python]
+      - name: Systems
+        # TODO: trim to what you actually want to claim
+        keywords: [CUDA, vLLM, SGLang, verl, PyTorch]
