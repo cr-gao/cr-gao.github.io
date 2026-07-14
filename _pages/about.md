@@ -30,8 +30,3 @@ latest_posts:
 I'm Chenrui, an incoming MSCS student at UT Austin. I obtained my B.S.E. in Computer Engineering at the [University of Michigan](https://www.eecs.umich.edu/). I work on **LLM infrastructure** — inference engines and RL post-training / rollout systems. Previously I did robotics research at CMU's ARCS Lab on multi-agent path planning.
 
 My focus now is deliberately on the systems side of large models: high-throughput inference, RL training infrastructure, and agentic RL rollout scheduling. Strong C++ and Python.
-
-<!-- NOTE: `build-log` has no published post yet, so /blog/category/build-log/ does not exist and this
-     links to the blog index instead. Switch it to {{ '/blog/category/build-log/' }} once you publish
-     the first build-log post. Same for paper-notes. -->
-
