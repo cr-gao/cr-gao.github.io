@@ -1,0 +1,211 @@
+<!DOCTYPE html> <html> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> SGLang cache-aware scheduling: radix-tree + DFS ordering and jump-forward decoding | Chenrui Gao </title> <meta name="author" content="Chenrui Gao"> <meta name="description" content="Why the order you run requests in is a cache decision, and how SGLang turns prefix sharing into a scheduling policy."> <meta name="keywords" content="llm inference, vllm, sglang, verl, rl post-training, gpu systems, cuda, c++"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%E2%9A%A1&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=9278fad11fbb7f97e25b00cf0f4948af"> <link rel="canonical" href="https://cr-gao.github.io/blog/2026/sglang-cache-aware-scheduling/"> <script src="/assets/js/theme.js?v=7af685e2ba20b37fef545c97b8064050"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> <link rel="stylesheet" href="/assets/css/al-folio-distill.css?v=fb7196ec07cb5299d51b2cbdc69c23d7"> <script src="/assets/js/distillpub/template.v2.js"></script> <script src="/assets/js/distillpub/transforms.v2.js"></script> </head> <body> <d-front-matter> <script async type="text/json">
+      {
+            "title": "SGLang cache-aware scheduling: radix-tree + DFS ordering and jump-forward decoding",
+            "description": "Why the order you run requests in is a cache decision, and how SGLang turns prefix sharing into a scheduling policy.",
+            "published": "July 14, 2026",
+            "authors": [
+              
+              {
+                "author": "Chenrui Gao",
+                "authorURL": "/",
+                "affiliations": [
+                  {
+                    "name": "UM–SJTU Joint Institute",
+                    "url": ""
+                  }
+                ]
+              }
+              
+            ],
+            "katex": {
+              "delimiters": [
+                {
+                  "left": "$",
+                  "right": "$",
+                  "display": false
+                },
+                {
+                  "left": "$$",
+                  "right": "$$",
+                  "display": true
+                }
+              ]
+            }
+          }
+    </script> </d-front-matter> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Chenrui</span> Gao </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/projects/">projects </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">cv </a> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="post distill"> <d-title> <h1>SGLang cache-aware scheduling: radix-tree + DFS ordering and jump-forward decoding</h1> <p>Why the order you run requests in is a cache decision, and how SGLang turns prefix sharing into a scheduling policy.</p> </d-title> <d-byline></d-byline> <d-article> <d-contents> <nav class="l-text figcaption"> <h3>Contents</h3> <div> <a href="#the-setup-kv-reuse-is-a-tree-not-a-cache-line">The setup — KV reuse is a tree, not a cache line</a> </div> <div> <a href="#dfs-ordering-or-why-the-schedule-is-the-cache-policy">DFS ordering, or why the schedule is the cache policy</a> </div> <div> <a href="#jump-forward-decoding">Jump-forward decoding</a> </div> <div> <a href="#what-i-still-want-to-measure">What I still want to measure</a> </div> </nav> </d-contents> <p>Most of the throughput story in LLM serving is told as a memory story: PagedAttention <d-cite key="kwon2023vllm"></d-cite> made KV cache allocation look like virtual memory, and everyone moved on. SGLang <d-cite key="zheng2024sglang"></d-cite> makes a different and, to me, more interesting claim — that once KV state is <em>shareable</em> across requests, <strong>the order in which you admit requests is itself a cache-replacement decision</strong>. Scheduling stops being a fairness/latency knob and becomes a hit-rate knob. This post is my read of the two mechanisms that carry that claim: radix-tree prefix sharing with DFS-ordered scheduling, and jump-forward decoding for constrained output.</p> <h2 id="the-setup--kv-reuse-is-a-tree-not-a-cache-line">The setup — KV reuse is a tree, not a cache line</h2> <p>The observation underneath RadixAttention is that in real workloads, requests are not independent strings — they share prefixes. A few-shot prompt, a system prompt, a chat history, a tree-of-thought expansion, a batch of RL rollouts sampled from the same state: all of these are <em>many requests that agree on a long prefix and diverge at some suffix</em>. And since attention is causal, the KV entries for a prefix depend only on that prefix. So if two requests share the first \(k\) tokens, they can share the first \(k\) KV blocks — not “recompute cheaply,” but literally point at the same memory.</p> <p>The right index structure for “set of strings with shared prefixes” is a radix tree, and that is exactly what SGLang keeps: nodes are token sequences, edges extend a prefix, and each node owns the KV blocks for its segment. A new request walks the tree from the root, matching as far as it can, and the length of that walk is the number of prefill tokens it <em>doesn’t</em> have to compute. Eviction is LRU over the leaves, with reference counting so that a node still in use by a running request can’t be reclaimed:</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="nc">RadixNode</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">TokenId</span><span class="o">&gt;</span> <span class="n">segment</span><span class="p">;</span>                  <span class="c1">// this node's token run</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">BlockId</span><span class="o">&gt;</span> <span class="n">kv_blocks</span><span class="p">;</span>                <span class="c1">// KV pages for `segment`</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">TokenId</span><span class="p">,</span> <span class="n">RadixNode</span><span class="o">*&gt;</span> <span class="n">kids</span><span class="p">;</span>  <span class="c1">// keyed by first token of the child</span>
+    <span class="n">RadixNode</span><span class="o">*</span> <span class="n">parent</span> <span class="o">=</span> <span class="nb">nullptr</span><span class="p">;</span>
+
+    <span class="kt">int</span>  <span class="n">ref_count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>   <span class="c1">// running requests pinning this node; &gt;0 blocks eviction</span>
+    <span class="n">Tick</span> <span class="n">last_access</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// LRU key — only meaningful on leaves with ref_count == 0</span>
+<span class="p">};</span>
+</code></pre></div></div> <p>The <code class="language-plaintext highlighter-rouge">ref_count</code>/<code class="language-plaintext highlighter-rouge">last_access</code> pair is the whole memory policy in two fields: you may only evict a <em>leaf</em> whose refcount is zero, which is what keeps a shared prefix alive as long as anyone below it is still generating.</p> <pre><code class="language-mermaid">graph TD
+    R["root"] --&gt; S["system prompt&lt;br/&gt;(shared, 512 tok)"]
+    S --&gt; A["few-shot block A&lt;br/&gt;(128 tok)"]
+    S --&gt; B["few-shot block B&lt;br/&gt;(96 tok)"]
+    A --&gt; R1["req 1 suffix"]
+    A --&gt; R2["req 2 suffix"]
+    B --&gt; R3["req 3 suffix"]
+    B --&gt; R4["req 4 suffix"]
+
+    classDef shared fill:#d3f9d8,stroke:#2f9e44,color:#1b1b1b;
+    classDef leaf fill:#e7f5ff,stroke:#1971c2,color:#1b1b1b;
+    class S,A,B shared;
+    class R1,R2,R3,R4 leaf;
+</code></pre> <p>The metric that matters is the fraction of prompt tokens served out of the tree rather than recomputed. For a batch of requests \(r_1, \dots, r_n\) hitting a tree state \(\mathcal{T}\):</p> \[\text{hit rate} \;=\; \frac{\sum_{i=1}^{n} \bigl| \mathrm{lcp}(r_i, \mathcal{T}) \bigr|}{\sum_{i=1}^{n} |r_i|}\] <p>where \(\mathrm{lcp}(r_i, \mathcal{T})\) is the longest prefix of \(r_i\) present in the tree <em>at the moment \(r_i\) is scheduled</em>. That last clause is the whole point, and it is where scheduling walks in.</p> <h2 id="dfs-ordering-or-why-the-schedule-is-the-cache-policy">DFS ordering, or why the schedule is the cache policy</h2> <p>Read the hit-rate expression again: \(\mathcal{T}\) is not a constant. It’s the tree <em>as it exists when the request runs</em>, and what’s in it depends on which requests ran before, and what got evicted in between. So the scheduler is choosing the denominator’s fate. Run all the requests that share a subtree back-to-back and the subtree is hot for all of them; interleave them with unrelated requests and the LRU policy evicts the subtree between visits — you pay for the same prefix two or three times.</p> <p>SGLang’s policy is to sort the waiting queue by <strong>longest matched prefix</strong>: whichever request has the deepest match against the current tree goes first. The paper’s framing is that this ordering is, up to ties, a <strong>depth-first traversal of the radix tree</strong>. That’s the part I find genuinely nice, because it converts a scheduling heuristic into a statement you can reason about: a DFS visits every node in a subtree contiguously, so each shared prefix is computed once, kept resident while its entire subtree is drained, and then evicted for good. There is no revisit, so — provided the cache is large enough to hold the KV of one root-to-leaf path — the <em>only</em> prefill tokens you compute are the ones that were genuinely new. That’s the optimum for this request set.<d-footnote>The "large enough" caveat is doing real work. If the cache can't hold a full path, the subtree gets evicted mid-traversal and you're back to recomputation — DFS-optimality degrades gracefully, but it degrades. This is exactly the regime where the interaction with continuous batching gets interesting, since the running batch is also eating KV blocks.</d-footnote></p> <p>The cost is the obvious one: <strong>longest-prefix-first is not fair</strong>. A request whose prefix nobody shares can sit behind an unbounded stream of requests that keep matching deeper into a hot subtree — classic starvation, and the more cache-friendly your workload, the worse it gets. Production SGLang doesn’t run pure LPM for this reason; the scheduler bounds the reordering (waiting-queue window, FCFS fallback, aging) so that cache-affinity is a <em>preference</em> inside a bounded window rather than a total order. Sketching the policy as code makes the tension obvious:</p> <d-code block="" language="python"> def next_batch(waiting, tree, budget, max_reorder_window): # Cache affinity is only allowed to reorder within a bounded window, # otherwise a hot subtree can starve a prefix-less request forever. window = waiting[:max_reorder_window] scored = sorted( window, key=lambda r: -tree.longest_matched_prefix(r.tokens), # DFS-ish order ) batch, used = [], 0 for req in scored: matched = tree.longest_matched_prefix(req.tokens) need = kv_blocks_for(len(req.tokens) - matched) # only the *new* tokens if used + need &gt; budget: break tree.pin(req, matched) # refcount++, so LRU can't evict it mid-flight batch.append(req) used += need return batch </d-code> <p>The line I keep staring at is <code class="language-plaintext highlighter-rouge">need = kv_blocks_for(len(req.tokens) - matched)</code>. Under prefix sharing, a request’s admission cost depends on <em>what else has already run</em> — which means the scheduler’s cost model is stateful, and greedy packing against a KV budget is no longer separable per request. That’s a different animal from the vLLM-style scheduler, where a request’s block demand is a property of the request alone.</p> <h2 id="jump-forward-decoding">Jump-forward decoding</h2> <p>The second mechanism is orthogonal and targets constrained decoding. When output is constrained by a grammar or regex — JSON matching a schema, say — SGLang compiles the constraint into a finite-state machine and, at each step, masks the logits to the transitions the FSM allows. The standard implementation still runs one forward pass per token, even when the FSM permits exactly one continuation.</p> <p>But look at what a JSON schema actually looks like as an FSM. After the model commits to emitting an object with a <code class="language-plaintext highlighter-rouge">name</code> field, the path through <code class="language-plaintext highlighter-rouge">{"name":</code> is <em>deterministic</em> — there is a run of states with exactly one outgoing transition. Those tokens are not predictions; they are structure. Running a 70B forward pass to “decide” the <code class="language-plaintext highlighter-rouge">"</code> after <code class="language-plaintext highlighter-rouge">{</code> is pure waste. Jump-forward decoding detects these deterministic runs in the FSM and emits the whole run at once, appending it to the KV cache via a prefill-style batched pass instead of \(m\) sequential decode steps. On schema-heavy workloads the win is large, because the deterministic runs are a big fraction of the output.</p> <p>The subtlety — and the reason this isn’t a five-line patch — is <strong>retokenization</strong>. The FSM is defined over characters; the model consumes tokens. If you jump forward over the string <code class="language-plaintext highlighter-rouge">":</code> and then hand the model a token boundary it would never have produced itself, you’ve pushed it off-distribution: the tokenizer might merge <code class="language-plaintext highlighter-rouge">":</code> with the following character into a single token, and now the model’s context contains a token sequence that no tokenizer would ever emit for that text. SGLang handles this by re-tokenizing the jumped span together with its boundary context, rather than naively concatenating token IDs.</p> <h2 id="what-i-still-want-to-measure">What I still want to measure</h2> <p>Two things I don’t yet have a good intuition for, and want to poke at in my own <a href="/projects/mini-inference-engine/">mini engine</a>:</p> <ol> <li> <p><strong>How DFS ordering interacts with continuous batching under memory pressure.</strong> The DFS-optimality argument assumes a path fits in cache. But the running batch is simultaneously consuming KV blocks, so the effective cache for the <em>waiting</em> queue is whatever decode isn’t using — a quantity that moves every step. I’d like to know how quickly the hit-rate advantage collapses as that headroom shrinks.</p> </li> <li> <p><strong>Whether prefix-affinity scheduling helps or hurts RL rollout.</strong> Rollouts from a shared state are the ideal radix workload — enormous shared prefix, \(n\) divergent suffixes. But in RL you also want to <em>cancel</em> or deprioritize some of those rollouts, and cancelling a request that’s pinning a shared subtree is not free. That’s the seam between this post and the <a href="/projects/rl-rollout-scheduler/">rollout scheduler</a> I’m building — the admission decision and the cache decision are the same decision, and I don’t think anyone has written down what the joint policy should be.</p> </li> </ol> </d-article> <d-appendix> <d-footnote-list></d-footnote-list> <d-citation-list></d-citation-list> </d-appendix> <d-bibliography src="/assets/bibliography/2026-07-14-sglang-cache-aware-scheduling.bib"></d-bibliography> <d-article> <br> <br> </d-article> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Chenrui Gao. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script src="/assets/js/distillpub/overrides.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/mermaid@10.7.0/dist/mermaid.min.js" integrity="sha256-TtLOdUA8mstPoO6sGvHIGx2ceXrrX4KgIItO06XOn8A=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js" integrity="sha256-1rA678n2xEx7x4cTZ5x4wpUCj6kUMZEZ5cxLSVSFWxw=" crossorigin="anonymous"></script> <script defer src="/assets/al_charts/js/mermaid-setup.js" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script defer src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6" crossorigin="anonymous"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-projects",
+          title: "projects",
+          description: "LLM inference and RL training systems. The first two are being built in public — progress lands in the build-log.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/projects/";
+          },
+        },{id: "nav-cv",
+          title: "cv",
+          description: "The version rendered below comes from _data/cv.yml. Use the button above to download the PDF.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/cv/";
+          },
+        },{id: "post-sglang-cache-aware-scheduling-radix-tree-dfs-ordering-and-jump-forward-decoding",
+        
+          title: "SGLang cache-aware scheduling: radix-tree + DFS ordering and jump-forward decoding",
+        
+        description: "Why the order you run requests in is a cache decision, and how SGLang turns prefix sharing into a scheduling policy.",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/sglang-cache-aware-scheduling/";
+          
+        },
+      },{id: "news-joining-ut-austin-39-s-mscs-program-in-fall-2026",
+          title: 'Joining UT Austin&amp;#39;s MSCS program in Fall 2026.',
+          description: "",
+          section: "News",},{id: "news-starting-a-public-build-log-for-the-mini-inference-engine-39-projects-mini-inference-engine-39-relative-url-and-the-verl-rollout-scheduler-39-projects-rl-rollout-scheduler-39-relative-url",
+          title: 'Starting a public build log for the [mini inference engine]({{ &amp;#39;/projects/mini-inference-engine/&amp;#39; | relative_url...',
+          description: "",
+          section: "News",},{id: "projects-mini-inference-engine",
+          title: 'Mini Inference Engine',
+          description: "In progress — building in public. A from-scratch LLM inference engine in the nano-vLLM tradition: paged KV cache, continuous batching, and a request scheduler.",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/mini-inference-engine/";
+            },},{id: "projects-rl-rollout-scheduler-on-verl",
+          title: 'RL Rollout Scheduler on verl',
+          description: "In progress — building in public. Reframes oversample-and-cancel in RL rollout as a priority-based admission problem, and studies the length-correlated bias naive cancellation introduces.",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/rl-rollout-scheduler/";
+            },},{id: "projects-auto-eln",
+          title: 'auto-eln',
+          description: "Completed — undergraduate capstone. A Worker–Manager system for automated instrument data capture, with a template-driven schema.",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/auto-eln/";
+            },},{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%54%4F%44%4F", "_blank");
+        },
+      },{
+        id: 'social-github',
+        title: 'GitHub',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://github.com/TODO", "_blank");
+        },
+      },{
+        id: 'social-linkedin',
+        title: 'LinkedIn',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://www.linkedin.com/in/TODO", "_blank");
+        },
+      },{
+        id: 'social-scholar',
+        title: 'Google Scholar',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://scholar.google.com/citations?user=TODO", "_blank");
+        },
+      },{
+        id: 'social-cv',
+        title: 'CV',
+        section: 'Socials',
+        handler: () => {
+          window.open("/assets/pdf/cv.pdf", "_blank");
+        },
+      },{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>
