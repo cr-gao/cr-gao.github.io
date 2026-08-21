@@ -2,7 +2,7 @@
 layout: default
 permalink: /blog/
 title: blog
-nav: true
+nav: false # hidden while there are no published posts; flip back to true when the first draft ships
 nav_order: 1
 pagination:
   enabled: true

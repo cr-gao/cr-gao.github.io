@@ -2,11 +2,9 @@
 layout: page
 title: projects
 permalink: /projects/
-# TODO — point the build-log link at /blog/category/build-log/ once the first build-log post is live
-description: LLM inference and RL training systems. The first two are being built in public — progress lands in the <a href="/blog/">build-log</a>.
+description: Coursework systems projects, plus my upstream open-source work on LLM training and inference frameworks.
 nav: true
 nav_order: 3
-display_categories: [in-progress, completed]
 horizontal: false
 ---
 
@@ -69,18 +67,31 @@ horizontal: false
 
 <h2 id="open-source"><a href=".#open-source">open source</a></h2>
 
-Upstream contributions to LLM training and inference frameworks.
+Upstream contributions to LLM training and inference frameworks. Details and numbers are on the [cv](/cv/) page.
 
-#### [verl-omni](https://github.com/verl-project/verl-omni)
+#### [verl-omni](https://github.com/verl-project/verl-omni) · diffusion/omni RL post-training · 10 PRs merged
 
-Multimodal RL training framework built on verl.
+- [#325](https://github.com/verl-project/verl-omni/pull/325) · _merged_ · `[worker, trainer, cfg, tests, doc] feat: teacher runtime MVP for diffusion OPD (#293)`
+- [#300](https://github.com/verl-project/verl-omni/pull/300) · _merged_ · `[trainer, algo, cfg] feat: add teacher-anchored continuous distillation losses for diffusion OPD`
+- [#292](https://github.com/verl-project/verl-omni/pull/292) · _merged_ · `[doc] fix: drop incorrect threshold caveat from rollout correction doc`
+- [#291](https://github.com/verl-project/verl-omni/pull/291) · _merged_ · `[trainer, doc, tests] feat: log rollout-train log-prob consistency metrics by default`
+- [#280](https://github.com/verl-project/verl-omni/issues/280) · _RFC_ · rollout–training numerical consistency across SD3.5-Medium, Qwen-Image-20B, and BAGEL-7B
+- [#281](https://github.com/verl-project/verl-omni/pull/281) · _merged_ · `[doc, cfg] chore: document reward-server profiling in reward docs`
+- [#279](https://github.com/verl-project/verl-omni/pull/279) · _merged_ · `[omni] fix: drop stale vllm-omni 0.22 step-count mapping in BAGEL adapter`
+- [#256](https://github.com/verl-project/verl-omni/pull/256) · _merged_ · `[trainer, reward, cfg, doc] feat: profile reward-model rollout servers`
+- [#252](https://github.com/verl-project/verl-omni/pull/252) · _merged_ · `[trainer, doc] feat: profile rollout servers + lightweight profiling recipe for FlowGRPO`
+- [#246](https://github.com/verl-project/verl-omni/pull/246) · _merged_ · `[reward] fix: drop duplicate reward/<key>/score metric for multi-reward training`
+- [#242](https://github.com/verl-project/verl-omni/pull/242) · _merged_ · `[reward] fix: drop duplicate critic/score metric for single-reward training`
 
-- [#242](https://github.com/verl-project/verl-omni/pull/242) — _merged_ — `[reward] fix: drop duplicate critic/score metric for single-reward training`
-- [#246](https://github.com/verl-project/verl-omni/pull/246) — _merged_ — `[reward] fix: drop duplicate reward/<key>/score metric for multi-reward training`
-- [#252](https://github.com/verl-project/verl-omni/pull/252) — _merged_ — `[trainer, doc] feat: profile rollout servers + lightweight profiling recipe for FlowGRPO`
+#### [sglang-omni](https://github.com/sgl-project/sglang-omni) · Qwen3-Omni inference performance
 
-#### [vLLM-Omni](https://github.com/vllm-project/vllm-omni)
+- [#1161](https://github.com/sgl-project/sglang-omni/pull/1161) · _merged_ · `[Qwen3-Omni Perf] Thinker prefill: batch multimodal embedding merge, remove per-request host syncs`
 
-Merge-on-load feature for diffusion LoRA.
+#### [vllm-omni](https://github.com/vllm-project/vllm-omni) · SANA-Video parallelism & acceleration stack
 
-- [#5059](https://github.com/vllm-project/vllm-omni/pull/5059) — _open_ — `[Core] Merge-on-load fast path for diffusion LoRA (shadow wrappers)`
+- [#5940](https://github.com/vllm-project/vllm-omni/pull/5940) · _in review_ · `[Model] Add sequence parallelism to SANA-Video 2B`
+- [#5861](https://github.com/vllm-project/vllm-omni/pull/5861) · _in review_ · `[Model] Add TP and CFG parallelism to SANA-Video 2B`
+- [#5882](https://github.com/vllm-project/vllm-omni/pull/5882) · _in review_ · `[Model] Add Cache-DiT and CPU offload support for SANA-Video 2B`
+- [#5866](https://github.com/vllm-project/vllm-omni/pull/5866) · _in review_ · `[Bugfix][Diffusion] Fix FLASH_ATTN cross-attention key-padding unpad`
+- [#5269](https://github.com/vllm-project/vllm-omni/pull/5269) · _merged_ · `[Bugfix] Skip non-positive scheduled token spans in omni stage runners`
+- [#5059](https://github.com/vllm-project/vllm-omni/pull/5059) · _in review_ · `[Core] Merge-on-load fast path for diffusion LoRA (shadow wrappers)`

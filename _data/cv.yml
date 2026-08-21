@@ -1,105 +1,136 @@
 # RenderCV-style schema (https://rendercv.com/), consumed by the Jekyll CV page
-# at /cv/. The upstream render-cv.yml workflow (which compiled this into a PDF)
-# was removed: al-folio's own cv.yml no longer validates against current RenderCV,
-# which rejects `label`/`image`/`summary` as unknown fields. The PDF linked from
-# /cv/ is whatever you drop at assets/pdf/cv.pdf.
+# at /cv/. Keep this in sync with the one-page PDF at assets/pdf/cv.pdf, which is
+# the source of truth.
 #
-# Section titles are dispatched by *exact* name — see the note above Open Source
-# Projects below.
+# The CV page dispatches on the *exact* section title: Education, Experience,
+# Publications, Projects / Open Source Projects, Skills, Honors and Awards are
+# recognised; any other title falls through to a generic renderer that only
+# understands `bullet:` entries (used for Teaching below).
 cv:
   name: Chenrui Gao
-  label: LLM Infrastructure — inference & training systems
-  # TODO: uncomment and fill in (must be a valid address, or RenderCV rejects it)
-  # email: crgao@umich.edu
-  # location: Shanghai, China
-  image: ""
+  label: LLM infrastructure — inference & RL post-training systems
+  email: cg52638@my.utexas.edu
+  website: https://cr-gao.github.io
   summary: >-
-    Computer Engineering Class of 2026 at University of Michigan, joining UT Austin's
-    MSCS program in Fall 2026. I work on LLM infrastructure — inference engines and
-    RL post-training / rollout systems: high-throughput inference, RL training
-    infrastructure, and agentic RL rollout scheduling. Previously robotics research
-    at CMU's ARCS Lab on multi-agent path planning. Strong C++ and Python.
+    Incoming M.S. in Computer Science at UT Austin (Fall 2026), B.S.E. in Computer
+    Engineering from the University of Michigan. I work on LLM training and inference
+    systems and contribute upstream to verl-omni, sglang-omni, and vllm-omni. Previously
+    robotics research at CMU's ARCS Lab (VAMP-MR, IROS 2026) and UC Irvine.
 
-  # TODO: fill in your usernames (these are also set separately in _data/socials.yml)
   social_networks:
     - network: GitHub
       username: cr-gao
     - network: LinkedIn
-      username: chenrui-gao
+      username: chenrui-gao-749142328
 
   sections:
     Education:
       - institution: University of Texas at Austin
-        location: Austin, TX, USA
+        location: Austin, TX
         url: https://www.cs.utexas.edu/
         area: Computer Science
-        degree: MSCS
+        degree: M.S.
         start_date: 2026-08
-        end_date: present
+        end_date: 2028-05
         highlights:
-          - Incoming, Fall 2026.
+          - Expected May 2028.
 
-      - institution: University of Michigan
-        location: Ann Arbor, MI, USA
+      - institution: University of Michigan, Ann Arbor
+        location: Ann Arbor, MI
         url: https://www.eecs.umich.edu/
         area: Computer Engineering
-        degree: BSE
-        start_date: 2024-08 # TODO: verify your actual start date
-        end_date: 2026-05 # TODO: verify your actual graduation date
+        degree: B.S.E.
+        start_date: 2024-08
+        end_date: 2026-05
+        highlights:
+          - "GPA: 3.93/4.00"
 
       - institution: Shanghai Jiao Tong University
         location: Shanghai, China
-        url: https://www.gc.sjtu.edu.cn/
+        url: https://www.sjtu.edu.cn/
         area: Mechanical Engineering
-        degree: BSE
-        start_date: 2022-08 # TODO: verify your actual start date
-        end_date: 2026-08 # TODO: verify your actual graduation date
+        degree: B.E.
+        start_date: 2022-08
+        end_date: 2026-08
+        highlights:
+          - "GPA: 3.70/4.00, expected Aug 2026"
+
+    Publications:
+      - title: "VAMP-MR: Vector-Accelerated Motion Planning and Execution for Multi-Robot-Arms"
+        publisher: IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) 2026
+        date: 2026
+        summary: "Philip Huang, **Chenrui Gao**, Jiaoyang Li"
 
     Experience:
-      - company: CMU ARCS Lab
+      - company: Carnegie Mellon University, ARCS Lab
         position: Research Intern
-        location: Pittsburgh, PA, USA
+        location: Pittsburgh, PA (remote)
         start_date: 2024-11
-        end_date: 2025-11
-        summary: Robotics research on multi-agent path planning (VAMP-MR). # TODO: add start_date / end_date
-
-    Projects:
-      - name: Mini Inference Engine
-        date: 2026 - present
+        end_date: 2025-10
+        summary: Advised by Prof. Jiaoyang Li. Basis of the VAMP-MR publication.
         highlights:
-          - From-scratch LLM inference engine (nano-vLLM tradition) — paged KV cache, continuous batching, request scheduler.
-          - Building toward speculative decoding and/or MoE-aware optimization.
+          - "Built the planner's throughput-critical core in C++: batched forward-kinematics and collision checks across robot configurations into CPU SIMD lanes with a struct-of-arrays layout, removing motion validation as the bottleneck. **10–100×** faster, with millisecond-scale multi-arm motion generation."
+          - Implemented the CBS-MP multi-robot motion planning framework on top of the vectorized primitives.
 
-      - name: RL Rollout Scheduler on verl
-        date: 2026 - present
+      - company: University of California, Irvine
+        position: Research Intern
+        location: Irvine, CA
+        start_date: 2025-06
+        end_date: 2025-08
+        summary: Advised by Prof. Sven Koenig. Topological pathfinding with Ray-Cut CBS.
         highlights:
-          - Reframes oversample-and-cancel as priority-based admission; oversampled requests become low-priority backfill competing for GPU throughout generation.
-          - Studies the length-correlated bias naive cancellation introduces — costly for reasoning RL, where long trajectories carry high GRPO learning value.
-          - Targets a throughput-quality frontier with bias-bounded alternatives (partial rollout with pause/resume, importance-weighted truncation, randomized cancel).
+          - "Proposed a hierarchical approach for constrained multi-agent routing: computing homotopy classes over 2D space to guide Conflict-Based Search (CBS)."
 
-      - name: auto-eln
-        date: 2026
-        highlights:
-          - Worker-Manager system for automated instrument data capture (undergraduate capstone).
-          - Flask/SQLAlchemy manager, PySide6 worker, PostgreSQL with a template-driven schema.
-
-    # NOTE: the CV page dispatches on the *exact* section title. "Open Source Projects"
-    # and "Projects" both render with the project template; an unrecognised title
-    # (e.g. plain "Open Source") falls through to a generic renderer and shows nothing.
     Open Source Projects:
-      - name: verl-omni
+      - name: "verl-omni — diffusion/omni RL post-training (10 PRs merged, Jul 2026 – present)"
         url: https://github.com/verl-project/verl-omni
         highlights:
-          - "Merged PRs #242, #246, #252 — reward-metric fixes, and rollout-server profiling with a lightweight FlowGRPO profiling recipe."
+          - "Implemented **On-Policy Distillation** for diffusion RL, the core feature of official roadmap [RFC #293](https://github.com/verl-project/verl-omni/issues/293) ([#300](https://github.com/verl-project/verl-omni/pull/300) and [#325](https://github.com/verl-project/verl-omni/pull/325), both **merged**): teacher-anchored distillation losses (KL and flow-matching MSE) plus a frozen-teacher runtime that runs as a third forward-only worker alongside actor/ref, with fit-loop hooks and fail-closed config checks, following upstream verl conventions."
+          - "Verified it end to end on SD3.5-Medium with an OCR reward: distillation alone lifted student reward from **0.23 to 0.62–0.71**, reaching the FlowGRPO RL teacher's level about **5×** faster than GRPO training, with distillation KL falling monotonically from 4.2e-4 to 1.8e-5; backed by 150+ unit tests (mutation-tested), GPU smoke runs, and a 40-step training-curve reproduction."
+          - "Wrote a maintainer-endorsed [RFC](https://github.com/verl-project/verl-omni/issues/280) measuring rollout–training numerical consistency across 3 diffusion pipelines (SD3.5-Medium, Qwen-Image-20B, BAGEL-7B) and 8 experiment arms; its proposal shipped as default per-timestep monitoring ([#291](https://github.com/verl-project/verl-omni/pull/291))."
+          - "Traced a replay crash and one-directional log-prob drift to a stale BAGEL step-count mapping ([#279](https://github.com/verl-project/verl-omni/pull/279)); the fix cut mean log-prob drift **157×**, down to bf16 noise, matching an analytical prediction."
+          - "Wired the torch profiler into both trainer fit paths and the reward-model rollout server ([#252](https://github.com/verl-project/verl-omni/pull/252), [#256](https://github.com/verl-project/verl-omni/pull/256)): profiled-step time **616s to 70s**, trace size 163MB to 32MB."
 
-      - name: vLLM-Omni
+      - name: "sglang-omni — Qwen3-Omni inference performance, official roadmap subtask (Aug 2026)"
+        url: https://github.com/sgl-project/sglang-omni
+        highlights:
+          - "Rewrote the thinker-prefill multimodal embedding merge from a per-request Python loop into one batched GPU scatter ([#1161](https://github.com/sgl-project/sglang-omni/pull/1161), **merged** with 2 maintainer approvals): cut device-to-host syncs from **96 to 0** per batch for a **2.1–4.1×** speedup, clearing the path to prefill CUDA graphs."
+          - "Verified the rewrite three ways: 6000-seed differential fuzzing (element-wise identical), byte-identical end-to-end serving logits A/B, and an H800 performance matrix."
+
+      - name: "vllm-omni — SANA-Video parallelism & acceleration stack, maintainer-partitioned issue #5432 (Aug 2026)"
         url: https://github.com/vllm-project/vllm-omni
         highlights:
-          - "Open PR #5059 — merge-on-load fast path for diffusion LoRA (shadow wrappers)."
+          - "Derived a **sequence-parallel scheme for ReLU linear attention**, where existing Ulysses/Ring paths don't apply: since the KV state is a sum over the sequence dimension, SP needs only one all-reduce of a single d×d state, i.e. O(d²) communication regardless of sequence length; measured **1.80×** at SP2 and **3.57×** with SP2+CFG2 on 4×A800 ([#5940](https://github.com/vllm-project/vllm-omni/pull/5940), *in review*)."
+          - "Added tensor-parallel and CFG-parallel execution: TP2 **1.52×**, CFG2 **2.04×**, TP2×CFG2 **3.02×**, with a 32-case correctness matrix and TP1 bit-exact against baseline ([#5861](https://github.com/vllm-project/vllm-omni/pull/5861), *in review*)."
+          - "Added Cache-DiT caching with CPU offload: **1.56×** faster, peak GPU memory down **7.3 GiB** ([#5882](https://github.com/vllm-project/vllm-omni/pull/5882), *in review*)."
+          - "Fixed a FLASH_ATTN cross-attention key-padding bug that silently mixed samples within a batch, affecting every padded cross-attention diffusion model, raising real-weight output cosine from **0.9157 to 0.99996** ([#5866](https://github.com/vllm-project/vllm-omni/pull/5866), *in review*); omni stage-runner bugfix **merged** ([#5269](https://github.com/vllm-project/vllm-omni/pull/5269))."
+          - "Built a shadow-wrapper merge-on-load fast path for diffusion LoRA (fp32 delta fold-in, exact unload): LoRA generation overhead **+122% to +4.7%**, PPO ratio held at 1±1e-6 ([#5059](https://github.com/vllm-project/vllm-omni/pull/5059), *in review*)."
+
+    Projects:
+      - name: "LLM Training Systems from Scratch (Stanford CS336 Assignments)"
+        url: https://stanford-cs336.github.io/
+        summary: "PyTorch, Triton, NCCL · 2026"
+        highlights:
+          - "Wrote **FSDP from scratch** (backward-hook reduce-scatter, on-demand all-gather, fp32 master shards, round-robin sharded optimizer), a **FlashAttention Triton kernel**, and a **KV cache**, all inside a Transformer LM built from the ground up (RoPE, BPE tokenizer)."
+
+    Teaching:
+      - bullet: "Teaching Assistant, Intro to Computers & Programming (Prof. Jigang Wu), SJTU, Fall 2023"
+
+    Honors and Awards:
+      - title: Dean's Honor List
+        awarder: University of Michigan
+        date: 2025
+        summary: Dec 2024 and May 2025
+      - title: John Wu and Jane Sun Sunshine Scholarship
+        date: 2023
+        summary: Nov 2023
 
     Skills:
       - name: Languages
-        keywords: [C++, Python]
-      - name: Systems
-        # TODO: trim to what you actually want to claim
-        keywords: [CUDA, vLLM, SGLang, verl, PyTorch]
+        keywords: [C++, Python, Triton, CUDA (basic), MATLAB]
+      - name: ML Systems
+        keywords: [PyTorch (torch.distributed, torch.compile), vLLM, verl, FSDP/DDP + LoRA, FlashAttention, Ray, Hydra, torch profiler]
+      - name: Systems & Tools
+        keywords: [Linux, Git/GitHub OSS workflow, CUDA 13/cu130, ROS, OpenCV, NumPy, Pandas]
+      - name: Coursework
+        keywords: [Stanford CS336 (LLMs from Scratch), MIT 6.S081 (Operating Systems)]

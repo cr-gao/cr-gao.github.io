@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Joining UT Austin's MSCS program in Fall 2026. <!-- TODO: adjust the date to when this actually happened. -->
+Joining UT Austin's MSCS program in Fall 2026.
