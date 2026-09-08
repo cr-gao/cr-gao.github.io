@@ -14,7 +14,7 @@ cv:
   summary: >-
     Incoming M.S. in Computer Science at UT Austin (Fall 2026), B.S.E. in Computer
     Engineering from the University of Michigan. I work on LLM training and inference
-    systems and contribute upstream to verl-omni, sglang-omni, and vllm-omni. Previously
+    systems and contribute upstream to verl-omni (committer), sglang-omni, and vllm-omni. Previously
     robotics research at CMU's ARCS Lab (VAMP-MR, IROS 2026) and UC Irvine.
 
   social_networks:
@@ -82,11 +82,13 @@ cv:
           - "Proposed a hierarchical approach for constrained multi-agent routing: computing homotopy classes over 2D space to guide Conflict-Based Search (CBS)."
 
     Open Source Projects:
-      - name: "verl-omni — diffusion/omni RL post-training (10 PRs merged, Jul 2026 – present)"
+      - name: "verl-omni — diffusion/omni RL post-training (committer; 15 PRs merged, Jul 2026 – present)"
         url: https://github.com/verl-project/verl-omni
         highlights:
           - "Implemented **On-Policy Distillation** for diffusion RL, the core feature of official roadmap [RFC #293](https://github.com/verl-project/verl-omni/issues/293) ([#300](https://github.com/verl-project/verl-omni/pull/300) and [#325](https://github.com/verl-project/verl-omni/pull/325), both **merged**): teacher-anchored distillation losses (KL and flow-matching MSE) plus a frozen-teacher runtime that runs as a third forward-only worker alongside actor/ref, with fit-loop hooks and fail-closed config checks, following upstream verl conventions."
           - "Verified it end to end on SD3.5-Medium with an OCR reward: distillation alone lifted student reward from **0.23 to 0.62–0.71**, reaching the FlowGRPO RL teacher's level about **5×** faster than GRPO training, with distillation KL falling monotonically from 4.2e-4 to 1.8e-5; backed by 150+ unit tests (mutation-tested), GPU smoke runs, and a 40-step training-curve reproduction."
+          - "Extended it to **multi-teacher distillation** in verl's shape: per-key teacher routing, standalone teacher pools split per teacher, and a batch-padding fix for routed sub-batches ([#427](https://github.com/verl-project/verl-omni/pull/427), [#482](https://github.com/verl-project/verl-omni/pull/482)), then ported the runtime to the v1 sync trainer with a dual-teacher SD3.5-Medium recipe at v0/v1 curve parity ([#493](https://github.com/verl-project/verl-omni/pull/493)); two teacher config fixes (bf16 weights, infer micro-batch) cut the teacher stage **7.8s to 3.1s**."
+          - "Designed and shipped **async teacher scheduling** for the v1 separate_async trainer ([RFC #498](https://github.com/verl-project/verl-omni/issues/498), [#495](https://github.com/verl-project/verl-omni/pull/495)): a one-step-off scheduler overlaps teacher scoring of batch k with the actor update on batch k−1, hiding the teacher stage (3.6s to 0.02s residual wait) for **−13.8%** step time on the dual-teacher recipe and **−16.7% to −23.7%** with a fully loaded single teacher, at curve parity with the inline schedule; a colocated-reward batch bug found on the way was fixed in [#513](https://github.com/verl-project/verl-omni/pull/513)."
           - "Wrote a maintainer-endorsed [RFC](https://github.com/verl-project/verl-omni/issues/280) measuring rollout–training numerical consistency across 3 diffusion pipelines (SD3.5-Medium, Qwen-Image-20B, BAGEL-7B) and 8 experiment arms; its proposal shipped as default per-timestep monitoring ([#291](https://github.com/verl-project/verl-omni/pull/291))."
           - "Traced a replay crash and one-directional log-prob drift to a stale BAGEL step-count mapping ([#279](https://github.com/verl-project/verl-omni/pull/279)); the fix cut mean log-prob drift **157×**, down to bf16 noise, matching an analytical prediction."
           - "Wired the torch profiler into both trainer fit paths and the reward-model rollout server ([#252](https://github.com/verl-project/verl-omni/pull/252), [#256](https://github.com/verl-project/verl-omni/pull/256)): profiled-step time **616s to 70s**, trace size 163MB to 32MB."
@@ -97,13 +99,14 @@ cv:
           - "Rewrote the thinker-prefill multimodal embedding merge from a per-request Python loop into one batched GPU scatter ([#1161](https://github.com/sgl-project/sglang-omni/pull/1161), **merged** with 2 maintainer approvals): cut device-to-host syncs from **96 to 0** per batch for a **2.1–4.1×** speedup, clearing the path to prefill CUDA graphs."
           - "Verified the rewrite three ways: 6000-seed differential fuzzing (element-wise identical), byte-identical end-to-end serving logits A/B, and an H800 performance matrix."
 
-      - name: "vllm-omni — SANA-Video parallelism & acceleration stack, maintainer-partitioned issue #5432 (Aug 2026)"
+      - name: "vllm-omni — video diffusion parallelism & acceleration: SANA-Video stack (maintainer-partitioned issue #5432) and MAGI-2 Preview (Aug 2026 – present)"
         url: https://github.com/vllm-project/vllm-omni
         highlights:
-          - "Derived a **sequence-parallel scheme for ReLU linear attention**, where existing Ulysses/Ring paths don't apply: since the KV state is a sum over the sequence dimension, SP needs only one all-reduce of a single d×d state, i.e. O(d²) communication regardless of sequence length; measured **1.80×** at SP2 and **3.57×** with SP2+CFG2 on 4×A800 ([#5940](https://github.com/vllm-project/vllm-omni/pull/5940), *in review*)."
-          - "Added tensor-parallel and CFG-parallel execution: TP2 **1.52×**, CFG2 **2.04×**, TP2×CFG2 **3.02×**, with a 32-case correctness matrix and TP1 bit-exact against baseline ([#5861](https://github.com/vllm-project/vllm-omni/pull/5861), *in review*)."
-          - "Added Cache-DiT caching with CPU offload: **1.56×** faster, peak GPU memory down **7.3 GiB** ([#5882](https://github.com/vllm-project/vllm-omni/pull/5882), *in review*)."
-          - "Fixed a FLASH_ATTN cross-attention key-padding bug that silently mixed samples within a batch, affecting every padded cross-attention diffusion model, raising real-weight output cosine from **0.9157 to 0.99996** ([#5866](https://github.com/vllm-project/vllm-omni/pull/5866), *in review*); omni stage-runner bugfix **merged** ([#5269](https://github.com/vllm-project/vllm-omni/pull/5269))."
+          - "Derived a **sequence-parallel scheme for ReLU linear attention**, where existing Ulysses/Ring paths don't apply: since the KV state is a sum over the sequence dimension, SP needs only one all-reduce of a single d×d state, i.e. O(d²) communication regardless of sequence length; measured **1.80×** at SP2 and **3.57×** with SP2+CFG2 on 4×A800 ([#5940](https://github.com/vllm-project/vllm-omni/pull/5940), **merged**)."
+          - "Added tensor-parallel and CFG-parallel execution: TP2 **1.52×**, CFG2 **2.04×**, TP2×CFG2 **3.02×**, with a 32-case correctness matrix and TP1 bit-exact against baseline ([#5861](https://github.com/vllm-project/vllm-omni/pull/5861), **merged**)."
+          - "Added Cache-DiT caching with CPU offload: **1.56×** faster, peak GPU memory down **7.3 GiB** ([#5882](https://github.com/vllm-project/vllm-omni/pull/5882), **merged**)."
+          - "Brought **regional torch.compile** to the native MAGI-2 Preview transformer (roadmap milestone M4), splitting each layer into compilable regions around the eager packed-attention and MoE-routing kernels with precision-cast emulation to keep eager's bf16 roundings: denoise step **1.93s to 1.48s (−23.3%)** at SP4 on A800 with 1.1–2.2 GiB lower peak memory per rank, and a numerics study showing compiled-vs-eager drift sits at the level of kernel reduction order ([#7174](https://github.com/vllm-project/vllm-omni/pull/7174), *in review*); fixed layerwise CPU offload keeping a nested 40-layer block stack resident, which OOMed the single-GPU MAGI-2 profile ([#7187](https://github.com/vllm-project/vllm-omni/pull/7187), *in review*)."
+          - "Fixed a FLASH_ATTN cross-attention key-padding bug that silently mixed samples within a batch, affecting every padded cross-attention diffusion model, raising real-weight output cosine from **0.9157 to 0.99996** ([#5866](https://github.com/vllm-project/vllm-omni/pull/5866), **merged**); omni stage-runner bugfix **merged** ([#5269](https://github.com/vllm-project/vllm-omni/pull/5269))."
           - "Built a shadow-wrapper merge-on-load fast path for diffusion LoRA (fp32 delta fold-in, exact unload): LoRA generation overhead **+122% to +4.7%**, PPO ratio held at 1±1e-6 ([#5059](https://github.com/vllm-project/vllm-omni/pull/5059), *in review*)."
 
     Projects:
