@@ -31,7 +31,7 @@ I'm Chenrui, an incoming M.S. student in Computer Science at [UT Austin](https:/
 
 I work on **LLM training and inference systems**, mostly as an upstream contributor to open-source RL post-training and serving frameworks:
 
-- **[verl-omni](https://github.com/verl-project/verl-omni)** (committer) — RL post-training for diffusion and omni models: brought on-policy distillation to diffusion RL, from the teacher-anchored losses through multi-teacher routing, standalone teacher pools, and async teacher scheduling on the v1 trainer; also worked on rollout–training numerical consistency, profiling, and adapter correctness.
+- **[verl-omni](https://github.com/verl-project/verl-omni)** (committer) — RL post-training for diffusion and omni models: brought on-policy distillation to diffusion RL, from the teacher-anchored losses through multi-teacher routing, standalone teacher pools, and async teacher scheduling on the v1 trainer; ported hybrid rollout switching, which lends the actor's co-located GPUs to generation when sampling falls behind, to the v1 separate-async trainer; also worked on rollout–training numerical consistency, profiling, and adapter correctness.
 - **[sglang-omni](https://github.com/sgl-project/sglang-omni)** — inference performance for Qwen3-Omni: batching the multimodal prefill path and removing host syncs on the way to CUDA-graph coverage.
 - **[vllm-omni](https://github.com/vllm-project/vllm-omni)** — parallelism and acceleration for video diffusion models: sequence, tensor, and CFG parallelism plus caching and offload for SANA-Video, regional `torch.compile` for MAGI-2 Preview, and attention-backend and offload bug fixes.
 

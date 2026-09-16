@@ -69,8 +69,10 @@ horizontal: false
 
 Upstream contributions to LLM training and inference frameworks. Details and numbers are on the [cv](/cv/) page.
 
-#### [verl-omni](https://github.com/verl-project/verl-omni) · diffusion/omni RL post-training · committer · 15 PRs merged
+#### [verl-omni](https://github.com/verl-project/verl-omni) · diffusion/omni RL post-training · committer · 17 PRs merged
 
+- [#575](https://github.com/verl-project/verl-omni/pull/575) · _merged_ · `[trainer, cfg, tests, doc] feat: hybrid rollout switching for diffusion v1 separate-async`
+- [#588](https://github.com/verl-project/verl-omni/pull/588) · _merged_ · `[tests, ci, recipe, doc] refactor: trim diffusion OPD smokes to the v1 trainer`
 - [#495](https://github.com/verl-project/verl-omni/pull/495) · _merged_ · `[trainer, tests, doc] feat: async teacher scheduling for diffusion OPD on v1 separate_async`
 - [#498](https://github.com/verl-project/verl-omni/issues/498) · _RFC_ · one-step-off teacher scheduling for diffusion OPD on the v1 async trainer
 - [#513](https://github.com/verl-project/verl-omni/pull/513) · _merged_ · `[trainer, tests] fix: union colocated reward output into the v1 diffusion trainer batch`
